@@ -25,3 +25,47 @@ body {
     text-wrap: balance;
   }
 }
+
+.logo {
+  background-image: url("/image/logo.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.slide-pho {
+  background-image: url("/image/pho.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+.slide-bo-kho {
+  background-image: url("/image/bo_kho.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+.slide-bun-bo-hue {
+  background-image: url("/image/bun_bo_hue.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Custom font bold khi item được chọn */
+.user-menu .ant-menu-item-selected {
+  font-weight: bold !important;
+  color: #341c11 !important;
+}
+
+.user-menu .ant-menu-item-selected::after {
+  border-bottom-color: #341c11 !important;
+}
+
+.user-menu .ant-menu-item:hover:after {
+  border-bottom-color: #341c11 !important;
+}
