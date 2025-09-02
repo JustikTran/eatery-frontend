@@ -30,7 +30,7 @@ const menuItems = [
         label: <Link href={'/dashboard/topping'}>Quản lý món phụ</Link>,
     },
     {
-        key: "dashboard/topping",
+        key: "/dashboard/topping",
         icon: <UserOutlined />,
         label: <Link href={'dashboard/topping'}>Quản lý người dùng</Link>,
     },
@@ -48,12 +48,16 @@ const menuItems = [
 
 const AdminMenu = () => {
     const pathName = usePathname();
+    const matchedKeys = menuItems
+        .map(item => item.key)
+        .filter(key => pathName.startsWith(key));
+    const matchedKey = matchedKeys.sort((a, b) => b.length - a.length)[0] ?? "";
     return (
         <Menu
             theme="dark"
             mode="inline"
             items={menuItems}
-            selectedKeys={[pathName]}
+            selectedKeys={[matchedKey]}
         />
     );
 };
