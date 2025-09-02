@@ -2,9 +2,10 @@
 
 import LoadingPage from '@/components/loading/loadingPage';
 import ModalAddDish from '@/components/modal/modal.add.dish';
+import ModalUpdateDish from '@/components/modal/modal.update.dish';
 import { sendRequest } from '@/utils/api';
 import { EditOutlined, PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, Image, message, Modal, Popconfirm, Space, Table, TableColumnsType, Tag } from 'antd';
+import { Button, Image, message, Modal, Popconfirm, Space, Switch, Table, TableColumnsType } from 'antd';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 
@@ -12,6 +13,8 @@ const DishManagePage = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [dishes, setDishes] = useState<IDish[]>([]);
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
+    const [current, setCurrent] = useState<IDish | null>(null);
 
     const columns: TableColumnsType<IDish> = [
         {
@@ -45,12 +48,17 @@ const DishManagePage = () => {
             title: 'Trạng thái',
             dataIndex: 'InStock',
             key: 'inStock',
-            render: (inStock: boolean) =>
-                inStock ? (
-                    <Tag color="green">Đang bán</Tag>
-                ) : (
-                    <Tag color="red">Hết món</Tag>
-                ),
+            render: (_: unknown, record: IDish) => (
+                <Switch
+                    checked={record.InStock}
+                    checkedChildren="Đang bán"
+                    unCheckedChildren="Ngừng bán"
+                    onChange={() => {
+                        // Gọi API update trạng thái
+                        handleToggleStatus(record);
+                    }}
+                />
+            )
         },
         {
             title: '',
@@ -60,7 +68,10 @@ const DishManagePage = () => {
                     <div>
                         <Button
                             icon={<EditOutlined />}
-                            onClick={() => alert(`Sửa: ${record.Name}`)}
+                            onClick={() => {
+                                setCurrent(record);
+                                setShowUpdateModal(true);
+                            }}
                         >
                             Sửa
                         </Button>
@@ -99,7 +110,7 @@ const DishManagePage = () => {
     const handleDelete = async (dishId: string) => {
         try {
             setLoading(true);
-            const res = await sendRequest<IResponse>({
+            const res = await sendRequest<IResponse<IDish>>({
                 url: `${process.env.NEXT_PUBLIC_API_BACKEND}/odata/dish/id=${dishId}`,
                 method: "DELETE",
                 // headers: { Authorization: `Bearer ${accessToken}` }
@@ -117,6 +128,35 @@ const DishManagePage = () => {
             setLoading(false);
         }
     }
+
+    const handleToggleStatus = async (dish: IDish) => {
+        try {
+            const payload = {
+                Id: dish.Id,
+                Name: dish.Name,
+                InStock: !dish.InStock,
+                Description: dish.Description,
+                Price: dish.Price,
+                Image: dish.Image
+            }
+            const res = await sendRequest<IResponse<IDish>>({
+                url: `${process.env.NEXT_PUBLIC_API_BACKEND}/odata/dish/id=${dish.Id}`,
+                method: "PUT",
+                // headers: { Authorization: `Bearer ${accessToken}` },
+                body: payload
+            });
+            if (res.statusCode == 200) {
+                message.success("Cập nhật trạng thái thành công");
+                getDishes();
+            } else {
+                message.error("Cập nhật trạng thái thất bại");
+            }
+        } catch (err) {
+            console.error(err);
+            message.error("Cập nhật trạng thái thất bại");
+        }
+    };
+
 
     useEffect(() => {
         setLoading(true);
@@ -162,6 +202,17 @@ const DishManagePage = () => {
                 <ModalAddDish
                     onReload={() => getDishes()}
                     onClose={() => setShowModal(false)} />
+            </Modal>
+            <Modal title={"Cập nhật món ăn"}
+                footer={null}
+                centered
+                onCancel={() => setShowUpdateModal(false)}
+                destroyOnClose={true}
+                visible={showUpdateModal}>
+                <ModalUpdateDish
+                    dish={current || null}
+                    onClose={() => setShowUpdateModal(false)}
+                    onReload={() => getDishes()} />
             </Modal>
         </div>
     )

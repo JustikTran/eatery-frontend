@@ -9,10 +9,10 @@ interface IRequest {
     nextOption?: any;
 }
 
-interface IResponse {
+interface IResponse<T> {
     statusCode: number,
     message?: string,
-    data?: object
+    data?: T
 }
 
 interface IOdataResponse<T> {

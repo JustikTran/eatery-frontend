@@ -1,14 +1,17 @@
-import LoadingItem from '@/components/loading/loadingItem';
-import { sendRequest, sendRequestFile } from '@/utils/api';
+"use client";
+
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, InputNumber, message, Upload } from 'antd'
+import { Button, Divider, Form, Input, InputNumber, message, Space, Upload } from 'antd'
 import TextArea from 'antd/es/input/TextArea';
+import React, { useEffect, useState } from 'react'
+import { sendRequest, sendRequestFile } from '@/utils/api';
 import { UploadChangeParam, UploadFile } from 'antd/es/upload';
-import React, { useState } from 'react'
+import LoadingItem from '@/components/loading/loadingItem';
 
 interface IData {
-    onClose: () => void,
-    onReload: () => void
+    dish: IDish | null,
+    onReload: () => void,
+    onClose: () => void
 }
 
 interface ICreateResponse {
@@ -18,11 +21,18 @@ interface ICreateResponse {
     imageUrl: string;
 }
 
-const ModalAddDish = ({ onClose, onReload }: IData) => {
-    // const { accessToken } = useContext() ?? {};
+const ModalUpdateDish = ({ dish, onClose, onReload }: IData) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [thumbnail, setThumbnail] = useState<File | null>(null);
     const [form] = Form.useForm();
+
+    useEffect(() => {
+        form.setFieldsValue({
+            Name: dish?.Name,
+            Description: dish?.Description,
+            Price: dish?.Price
+        })
+    });
 
     const beforeUpload = (file: File) => {
         const isImage = file.type.startsWith("image/");
@@ -72,21 +82,22 @@ const ModalAddDish = ({ onClose, onReload }: IData) => {
         try {
             setLoading(true);
             const formData = form.getFieldsValue();
-            const thumbnailUri = thumbnail ? await UploadFile(thumbnail) : null;
+            const thumbnailUri = thumbnail ? await UploadFile(thumbnail) : dish?.Image;
             const payload = {
+                Id: dish?.Id,
                 Name: formData?.Name,
                 Description: formData?.Description,
                 Price: formData?.Price,
                 Image: thumbnailUri
             }
             const res = await sendRequest<IResponse<IDish>>({
-                url: `${process.env.NEXT_PUBLIC_API_BACKEND}/odata/dish`,
-                method: "POST",
+                url: `${process.env.NEXT_PUBLIC_API_BACKEND}/odata/dish/id=${dish?.Id}`,
+                method: "PUT",
                 // headers: { Authorization: `Bearer ${accessToken}` },
                 body: payload,
             })
-            if (res.statusCode == 201) {
-                message.success('Thêm món ăn mới thành công.');
+            if (res.statusCode == 200) {
+                message.success('Cập nhật món ăn thành công.');
 
                 onReload();
                 onClose();
@@ -95,7 +106,7 @@ const ModalAddDish = ({ onClose, onReload }: IData) => {
                 message.info(res.message);
             }
         } catch {
-            message.error('Thêm món ăn mới không thành công.');
+            message.error('Cập nhật món ăn không thành công.');
         } finally {
             setLoading(false);
         }
@@ -103,7 +114,7 @@ const ModalAddDish = ({ onClose, onReload }: IData) => {
 
     if (loading)
         return (
-            <LoadingItem notifyLoading='Đang thêm món ăn mới...' />
+            <LoadingItem notifyLoading='Đang cập nhật món ăn...' />
         )
 
     return (
@@ -141,11 +152,21 @@ const ModalAddDish = ({ onClose, onReload }: IData) => {
                 </Form.Item>
             </div>
 
-            <Button className='items-end' type="default" htmlType='submit'>
-                Thêm món
-            </Button>
+            <Divider />
+
+            <Form.Item wrapperCol={{ offset: 16, span: 16 }}>
+                <Space>
+                    <Button htmlType="button" onClick={() => onClose()}>
+                        Hủy
+                    </Button>
+                    <Button type="primary" htmlType="submit">
+                        Cập nhật
+                    </Button>
+                </Space>
+            </Form.Item>
+
         </Form>
     )
 }
 
-export default ModalAddDish
+export default ModalUpdateDish
