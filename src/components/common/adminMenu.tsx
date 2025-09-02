@@ -9,6 +9,7 @@ import {
     ShoppingCartOutlined,
     DollarOutlined,
     OrderedListOutlined,
+    MessageOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,7 +31,7 @@ const menuItems = [
         label: <Link href={'/dashboard/topping'}>Quản lý món phụ</Link>,
     },
     {
-        key: "/dashboard/topping",
+        key: "/dashboard/user",
         icon: <UserOutlined />,
         label: <Link href={'dashboard/topping'}>Quản lý người dùng</Link>,
     },
@@ -43,6 +44,11 @@ const menuItems = [
         key: "/dashboard/payment",
         icon: <DollarOutlined />,
         label: <Link href={'/dashboard/payment'}>Quản lý thanh toán</Link>,
+    },
+    {
+        key: "/dashboard/message",
+        icon: <MessageOutlined />,
+        label: <Link href={'/dashboard/message'}>Tin nhắn</Link>,
     },
 ];
 

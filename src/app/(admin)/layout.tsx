@@ -39,7 +39,9 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
         <Content >
           <main>{children}</main>
         </Content>
-        <Footer >Footer</Footer>
+        <Footer >
+          <div className="text-center text-xs">&copy; 2025 Justik Tran. All rights reserved. </div>
+        </Footer>
       </Layout>
     </Layout>
   );
