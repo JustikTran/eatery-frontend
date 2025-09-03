@@ -46,11 +46,15 @@ const UserHeader = () => {
             </div>
             <Space>
                 <Button
-                    className='!font-bold !bg-[#341C11] !border-[#341C11] !text-white hover:!bg-[#341C11d0] hover:!border-[#341C11]'
-                >Sign In</Button>
+                    className='w-fit px-2 !font-bold !bg-[#341C11] !border-[#341C11] !text-white hover:!bg-[#341C11d0] hover:!border-[#341C11]'
+                >
+                    <Link href={'/auth/sign-in'}>Sign In</Link>
+                </Button>
                 <Button
-                    className='!font-bold hover:!bg-[#341C11d0] !border-[#341C11] hover:!text-white !bg-transparent hover:!border-[#341C11] !text-[#341C11]'
-                >Sign Up</Button>
+                    className='px-2 !font-bold hover:!bg-[#341C11d0] !border-[#341C11] hover:!text-white !bg-transparent hover:!border-[#341C11] !text-[#341C11]'
+                >
+                    <Link href={'/auth/sign-up'}>Sign Up</Link>
+                </Button>
             </Space>
         </div>
     )
