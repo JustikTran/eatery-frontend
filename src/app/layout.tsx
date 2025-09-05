@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import StyledComponentsRegistry from "@/libs/AntdRegistry";
+import { AuthProvider } from '../context/AuthContext';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   title: "Eatery E-Commerce",
   description: "Eatery E-Commerce website",
   icons: {
-    icon: "/favicon.ico", 
+    icon: "/favicon.ico",
   },
 };
 
@@ -33,7 +34,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <StyledComponentsRegistry >
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </StyledComponentsRegistry>
       </body>
     </html>
